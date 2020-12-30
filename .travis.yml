@@ -1,0 +1,14 @@
+sudo: required
+services:
+  - docker
+before_install:
+  # Decrypt the encrypted gcloud credentials from travis ci
+  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  # Download sdk and install locally
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # Configure shell with path.bash.inc file
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # Install kubectl
+  - gcloud components update kubectl
+  # Authenticate user in gcloud (note: service-account is similar to AWS IAM)
+  - gcloud auth activate-service-account --key-file service-account.json
